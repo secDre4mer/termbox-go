@@ -593,7 +593,3 @@ func extract_event(inbuf []byte, event *Event, allow_esc_wait bool) extract_even
 
 	return event_not_extracted
 }
-
-func fcntl(fd int, cmd int, arg int) (val int, err error) {
-	return unix.FcntlInt(uintptr(fd), cmd, arg)
-}

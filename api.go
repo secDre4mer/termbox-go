@@ -70,7 +70,7 @@ func Init() error {
 	signal.Notify(sigwinch, unix.SIGWINCH)
 	signal.Notify(sigio, unix.SIGIO)
 
-	_, err = fcntl(in, unix.F_SETFL, unix.O_ASYNC|unix.O_NONBLOCK)
+	err = setFdAsync(in)
 	if err != nil {
 		out.Close()
 		if runtime.GOOS != "openbsd" && runtime.GOOS != "freebsd" {
@@ -78,14 +78,7 @@ func Init() error {
 		}
 		return err
 	}
-	_, err = fcntl(in, unix.F_SETOWN, unix.Getpid())
-	if runtime.GOOS != "darwin" && err != nil {
-		out.Close()
-		if runtime.GOOS != "openbsd" && runtime.GOOS != "freebsd" {
-			unix.Close(in)
-		}
-		return err
-	}
+
 	orig_tios, err = tcgetattr(outfd)
 	if err != nil {
 		out.Close()
